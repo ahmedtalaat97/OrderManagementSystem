@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OrderManagementSystem.Repository.Migrations
 {
-    public partial class InitialDb : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -36,21 +36,6 @@ namespace OrderManagementSystem.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,22 +115,40 @@ namespace OrderManagementSystem.Repository.Migrations
             migrationBuilder.InsertData(
                 table: "Customers",
                 columns: new[] { "CustomerId", "Email", "Name" },
-                values: new object[] { 1, "john.doe@example.com", "John Doe" });
+                values: new object[,]
+                {
+                    { 1, "john.doe@example.com", "John Doe" },
+                    { 2, "jane.smith@example.com", "Jane Smith" }
+                });
 
             migrationBuilder.InsertData(
-                table: "Customers",
-                columns: new[] { "CustomerId", "Email", "Name" },
-                values: new object[] { 2, "jane.smith@example.com", "Jane Smith" });
+                table: "Products",
+                columns: new[] { "ProductId", "Name", "Price", "Stock" },
+                values: new object[,]
+                {
+                    { 1, "Laptop", 999.99m, 50 },
+                    { 2, "Mouse", 49.99m, 150 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Orders",
                 columns: new[] { "OrderId", "CustomerId", "InvoiceId", "OrderDate", "PaymentMethod", "Status", "TotalAmount" },
-                values: new object[] { 1, 1, 0, new DateTime(2024, 7, 14, 6, 9, 32, 203, DateTimeKind.Local).AddTicks(9448), "Credit Card", "Processing", 100m });
+                values: new object[] { 1, 1, 0, new DateTime(2024, 7, 16, 9, 5, 42, 787, DateTimeKind.Local).AddTicks(9046), "Credit Card", "Processing", 100m });
 
             migrationBuilder.InsertData(
                 table: "Orders",
                 columns: new[] { "OrderId", "CustomerId", "InvoiceId", "OrderDate", "PaymentMethod", "Status", "TotalAmount" },
-                values: new object[] { 2, 2, 0, new DateTime(2024, 7, 14, 6, 9, 32, 203, DateTimeKind.Local).AddTicks(9480), "PayPal", "Shipped", 200m });
+                values: new object[] { 2, 2, 0, new DateTime(2024, 7, 16, 9, 5, 42, 787, DateTimeKind.Local).AddTicks(9081), "PayPal", "Shipped", 200m });
+
+            migrationBuilder.InsertData(
+                table: "OrderItems",
+                columns: new[] { "OrderItemId", "Discount", "OrderId", "ProductId", "Quantity", "UnitPrice" },
+                values: new object[] { 1, 0m, 1, 1, 1, 999.99m });
+
+            migrationBuilder.InsertData(
+                table: "OrderItems",
+                columns: new[] { "OrderItemId", "Discount", "OrderId", "ProductId", "Quantity", "UnitPrice" },
+                values: new object[] { 2, 0m, 1, 2, 1, 49.99m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_OrderId",
@@ -176,9 +179,6 @@ namespace OrderManagementSystem.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Orders");

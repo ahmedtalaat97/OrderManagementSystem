@@ -1,4 +1,5 @@
-﻿using OrderManagementSystem.Core.Entites;
+﻿using OrderManagementSystem.Core.DataTransferObjects;
+using OrderManagementSystem.Core.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace OrderManagementSystem.Core.Services
 {
     public interface IInvoiceService
     {
-        Task GenerateInvoiceAsync(int orderId);
-        Task<Invoice> GetInvoiceByIdAsync(int invoiceId);
-        Task<IEnumerable<Invoice>> GetInvoicesAsync();
+        Task<InvoiceDto> GenerateInvoiceAsync(int orderId);
+        Task<InvoiceDto> GetInvoiceByIdAsync(int invoiceId);
+        Task<IEnumerable<InvoiceDto>> GetInvoicesAsync();
     }
 }

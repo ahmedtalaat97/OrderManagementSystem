@@ -12,12 +12,12 @@ namespace OrderManagementSystem.Core.Entites
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentMethod { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = "Pending";
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
         public int InvoiceId { get; set; }
         public Invoice Invoice { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new HashSet<OrderItem>();
+        public List<OrderItem> OrderItems { get; set; } 
     }
 }

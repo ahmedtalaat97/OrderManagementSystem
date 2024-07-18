@@ -122,7 +122,7 @@ namespace OrderManagementSystem.Repository.Migrations
                             OrderId = 1,
                             CustomerId = 1,
                             InvoiceId = 0,
-                            OrderDate = new DateTime(2024, 7, 14, 6, 9, 32, 203, DateTimeKind.Local).AddTicks(9448),
+                            OrderDate = new DateTime(2024, 7, 16, 9, 5, 42, 787, DateTimeKind.Local).AddTicks(9046),
                             PaymentMethod = "Credit Card",
                             Status = "Processing",
                             TotalAmount = 100m
@@ -132,7 +132,7 @@ namespace OrderManagementSystem.Repository.Migrations
                             OrderId = 2,
                             CustomerId = 2,
                             InvoiceId = 0,
-                            OrderDate = new DateTime(2024, 7, 14, 6, 9, 32, 203, DateTimeKind.Local).AddTicks(9480),
+                            OrderDate = new DateTime(2024, 7, 16, 9, 5, 42, 787, DateTimeKind.Local).AddTicks(9081),
                             PaymentMethod = "PayPal",
                             Status = "Shipped",
                             TotalAmount = 200m
@@ -169,6 +169,26 @@ namespace OrderManagementSystem.Repository.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
+
+                    b.HasData(
+                        new
+                        {
+                            OrderItemId = 1,
+                            Discount = 0m,
+                            OrderId = 1,
+                            ProductId = 1,
+                            Quantity = 1,
+                            UnitPrice = 999.99m
+                        },
+                        new
+                        {
+                            OrderItemId = 2,
+                            Discount = 0m,
+                            OrderId = 1,
+                            ProductId = 2,
+                            Quantity = 1,
+                            UnitPrice = 49.99m
+                        });
                 });
 
             modelBuilder.Entity("OrderManagementSystem.Core.Entites.Product", b =>
@@ -192,31 +212,22 @@ namespace OrderManagementSystem.Repository.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
-                });
 
-            modelBuilder.Entity("OrderManagementSystem.Core.Entites.User", b =>
-                {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("Users");
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1,
+                            Name = "Laptop",
+                            Price = 999.99m,
+                            Stock = 50
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            Name = "Mouse",
+                            Price = 49.99m,
+                            Stock = 150
+                        });
                 });
 
             modelBuilder.Entity("OrderManagementSystem.Core.Entites.Invoice", b =>

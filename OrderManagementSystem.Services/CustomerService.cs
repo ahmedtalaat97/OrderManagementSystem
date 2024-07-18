@@ -1,4 +1,6 @@
-﻿using OrderManagementSystem.Core.Entites;
+﻿using AutoMapper;
+using OrderManagementSystem.Core.DataTransferObjects;
+using OrderManagementSystem.Core.Entites;
 using OrderManagementSystem.Core.Repositories;
 using OrderManagementSystem.Core.Services;
 using System;
@@ -13,32 +15,38 @@ namespace OrderManagementSystem.Services
     {
         private readonly ICustomerRepo _customerRepository;
         private readonly IOrderRepo _orderRepository;
+        private readonly IMapper _map;
 
-        public CustomerService(ICustomerRepo customerRepository, IOrderRepo orderRepository)
+        public CustomerService(ICustomerRepo customerRepository, IOrderRepo orderRepository , IMapper map)
         {
             _customerRepository = customerRepository;
             _orderRepository = orderRepository;
+            _map = map;
         }
 
-        public async Task<IEnumerable<Customer>> GetCustomersAsync()
+        public async Task<Customer> CreateCustomerAsync(CustomerDto customerDto)
         {
-            return await _customerRepository.GetCustomersAsync();
-        }
+            if (string.IsNullOrEmpty(customerDto.Name))
+            {
+                throw new ArgumentException( "Customer name is required.");
+            }
 
-        public async Task<Customer> GetCustomerByIdAsync(int customerId)
-        {
-            return await _customerRepository.GetCustomerByIdAsync(customerId);
-        }
-
-        public async Task AddCustomerAsync(Customer customer)
-        {
+            var customer = new Customer
+            {
+                Name = customerDto.Name,
+                Email = customerDto.Email
+            };
             await _customerRepository.AddCustomerAsync(customer);
             await _customerRepository.SaveChangesAsync();
+            return customer;
+
+
         }
 
-        public async Task<IEnumerable<Order>> GetCustomerOrdersAsync(int customerId)
+        public async Task<List<OrderDto>> GetCustomerOrdersAsync(int customerId)
         {
-            return await _orderRepository.GetOrdersAsync();
+            var orders=await _orderRepository.GetOrdersByCustomerIdAsync(customerId);
+            return _map.Map<List<OrderDto>>(orders);
         }
     }
 }

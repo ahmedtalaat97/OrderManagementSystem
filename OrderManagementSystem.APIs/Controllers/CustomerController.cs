@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OrderManagementSystem.APIs.Errors;
+using OrderManagementSystem.Core.DataTransferObjects;
 using OrderManagementSystem.Core.Entites;
 using OrderManagementSystem.Core.Services;
 
@@ -11,52 +14,35 @@ namespace OrderManagementSystem.APIs.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+       
 
         public CustomerController(ICustomerService customerService)
         {
             _customerService = customerService;
+      
         }
 
-        // POST: api/customers
         [HttpPost]
-        public async Task<IActionResult> CreateCustomer([FromBody] Customer customer)
+        public async Task<ActionResult<CustomerDto>> CreateCustomer([FromBody] CustomerDto customerDto)
         {
-            if (customer == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Customer is null.");
+                return BadRequest(new ApiResponse(404,"Not a Valid Customer"));
             }
 
-            await _customerService.AddCustomerAsync(customer);
-            return CreatedAtAction(nameof(GetCustomerById), new { customerId = customer.CustomerId }, customer);
+            var createdCustomer = await _customerService.CreateCustomerAsync(customerDto);
+            return Ok(createdCustomer);
         }
 
-        // GET: api/customers
-        [HttpGet]
-        public async Task<IActionResult> GetCustomers()
-        {
-            var customers = await _customerService.GetCustomersAsync();
-            return Ok(customers);
-        }
-
-        // GET: api/customers/{customerId}
-        [HttpGet("{customerId}")]
-        public async Task<IActionResult> GetCustomerById(int customerId)
-        {
-            var customer = await _customerService.GetCustomerByIdAsync(customerId);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(customer);
-        }
-
-        // GET: api/customers/{customerId}/orders
-        [Authorize(Roles = "Customer, Admin")]
         [HttpGet("{customerId}/orders")]
-        public async Task<IActionResult> GetCustomerOrders(int customerId)
+        public async Task<ActionResult<OrderDto>> GetCustomerOrders(int customerId)
         {
             var orders = await _customerService.GetCustomerOrdersAsync(customerId);
+            if (orders == null|| orders.Count()==0)
+            {
+                return NotFound(new ApiResponse(404, $"No Customer Orders with id {customerId} founded"));
+            }
+
             return Ok(orders);
         }
     }

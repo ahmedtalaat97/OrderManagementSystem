@@ -41,6 +41,17 @@ namespace OrderManagementSystem.Repository.Data
                 new Order { OrderId = 1, CustomerId = 1, OrderDate = DateTime.Now, TotalAmount = 100, PaymentMethod = "Credit Card", Status = "Processing" },
                 new Order { OrderId = 2, CustomerId = 2, OrderDate = DateTime.Now, TotalAmount = 200, PaymentMethod = "PayPal", Status = "Shipped" }
             );
+            modelBuilder.Entity<Product>().HasData(
+           new Product { ProductId = 1, Name = "Laptop", Price = 999.99m, Stock = 50 },
+           new Product { ProductId = 2, Name = "Mouse", Price = 49.99m, Stock = 150 }
+       );
+
+            modelBuilder.Entity<OrderItem>().HasData(
+                new OrderItem { OrderItemId = 1, OrderId = 1, ProductId = 1, Quantity = 1, UnitPrice = 999.99m, Discount = 0 },
+                new OrderItem { OrderItemId = 2, OrderId = 1, ProductId = 2, Quantity = 1, UnitPrice = 49.99m, Discount = 0 }
+            );
+
+          
         }
 
 
@@ -51,7 +62,7 @@ namespace OrderManagementSystem.Repository.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<User> Users { get; set; }
+      
         public DbSet<Invoice> Invoices { get; set; }
     }
 }

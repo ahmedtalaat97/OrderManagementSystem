@@ -1,4 +1,6 @@
-﻿using OrderManagementSystem.Core.Entites;
+﻿using AutoMapper;
+using OrderManagementSystem.Core.DataTransferObjects;
+using OrderManagementSystem.Core.Entites;
 using OrderManagementSystem.Core.Repositories;
 using OrderManagementSystem.Core.Services;
 using System;
@@ -14,13 +16,17 @@ namespace OrderManagementSystem.Services
         private readonly IInvoiceRepo _invoiceRepository;
         private readonly IOrderRepo _orderRepository;
 
-        public InvoiceService(IInvoiceRepo invoiceRepository, IOrderRepo orderRepository)
+        private readonly IMapper _mapper;
+
+       
+        public InvoiceService(IInvoiceRepo invoiceRepository, IOrderRepo orderRepository, IMapper mapper)
         {
             _invoiceRepository = invoiceRepository;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
-        public async Task GenerateInvoiceAsync(int orderId)
+        public async Task<InvoiceDto> GenerateInvoiceAsync(int orderId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order == null)
@@ -32,21 +38,26 @@ namespace OrderManagementSystem.Services
             {
                 OrderId = orderId,
                 InvoiceDate = DateTime.Now,
-                TotalAmount = order.TotalAmount
+                TotalAmount = order.TotalAmount,
+                Order=await _orderRepository.GetOrderByIdAsync(orderId),
             };
 
             await _invoiceRepository.AddInvoiceAsync(invoice);
             await _invoiceRepository.SaveChangesAsync();
+            return _mapper.Map<InvoiceDto>(invoice);
         }
 
-        public async Task<Invoice> GetInvoiceByIdAsync(int invoiceId)
+        public async Task<InvoiceDto> GetInvoiceByIdAsync(int invoiceId)
         {
-            return await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+            var invoice= await _invoiceRepository.GetInvoiceByIdAsync(invoiceId);
+
+            return _mapper.Map<InvoiceDto>(invoice);
         }
 
-        public async Task<IEnumerable<Invoice>> GetInvoicesAsync()
+        public async Task<IEnumerable<InvoiceDto>> GetInvoicesAsync()
         {
-            return await _invoiceRepository.GetInvoicesAsync();
+            var invoice = await _invoiceRepository.GetInvoicesAsync();
+            return _mapper.Map<IEnumerable<InvoiceDto>>(invoice);
         }
     }
 }

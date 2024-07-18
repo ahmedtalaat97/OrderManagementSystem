@@ -20,7 +20,7 @@ namespace OrderManagementSystem.Repository
             
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersAsync()
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
             return await _context.Orders.Include(o => o.OrderItems).ToListAsync();
         }
@@ -44,5 +44,14 @@ namespace OrderManagementSystem.Repository
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Order>> GetOrdersByCustomerIdAsync(int customerId)
+        {
+           
+
+            return await _context.Orders.Include(o=>o.OrderItems).Where(o=>o.CustomerId == customerId).ToListAsync();
+        }
+
+       
     }
 }

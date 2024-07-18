@@ -1,4 +1,5 @@
-﻿using OrderManagementSystem.Core.Entites;
+﻿using OrderManagementSystem.Core.DataTransferObjects;
+using OrderManagementSystem.Core.Entites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace OrderManagementSystem.Core.Services
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetProductsAsync();
-        Task<Product> GetProductByIdAsync(int productId);
-        Task AddProductAsync(Product product);
-        Task UpdateProductAsync(Product product);
+        Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+        Task<ProductDto> GetProductByIdAsync(int productId);
+        Task<Product> AddProductAsync(ProductCreateDto product);
+        Task<ProductDto> UpdateProductAsync(ProductDto product);
     }
 }
