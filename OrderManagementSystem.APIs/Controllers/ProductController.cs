@@ -14,13 +14,12 @@ namespace OrderManagementSystem.APIs.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper;
 
 
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
-            _mapper = mapper;
+        
         }
 
         [HttpPost]
@@ -53,8 +52,7 @@ namespace OrderManagementSystem.APIs.Controllers
         public async Task<ActionResult<Product>> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
-            var mappedProduct = _mapper.Map<Product>(products);
-            return Ok(mappedProduct);
+            return Ok(products);
         }
 
         [HttpPut("{productId}")]
@@ -67,17 +65,13 @@ namespace OrderManagementSystem.APIs.Controllers
             }
         
 
-           
-               
+            if (productId != productDto.ProductId)
+            {
+                return BadRequest(new ApiResponse(401,$"No product with id {productId}"));
+            }
 
             var updatedProduct = await _productService.UpdateProductAsync(productDto);
-            if (updatedProduct is null)
-            {
-                return BadRequest(new ApiResponse(401, $"No product with id {productId}"));
-
-            }
-            var mappedProduct=_mapper.Map<Product>(updatedProduct); 
-            return Ok(mappedProduct);
+            return Ok(updatedProduct);
         }
 
 

@@ -141,13 +141,14 @@ namespace OrderManagementSystem.APIs
                 try
                 {
                     var context = services.GetRequiredService<OrderContext>();
+                    var identityDb=services.GetRequiredService<IdentityDataContext>();
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                    if ((await context.Database.GetPendingMigrationsAsync()).Any())
-                    {
-                        await context.Database.MigrateAsync();
-                    }
+                   
+                   
+                     await context.Database.MigrateAsync();
+                    await identityDb.Database.MigrateAsync();
                    
                     
                     await IdentityDataSeed.SeedAsync(userManager, roleManager);
